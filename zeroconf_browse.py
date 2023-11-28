@@ -11,8 +11,7 @@ from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 # The state changes can be ServiceStateChange.Added, ServiceStateChange.Removed, or ServiceStateChange.Updated
 
 def on_service_state_change(
-    zeroconf: Zeroconf, service_type: str, name: str, state_change: ServiceStateChange
-) -> None:
+    zeroconf: Zeroconf, service_type: str, name: str, state_change: ServiceStateChange) -> None:
     print(f"Service {name} of type {service_type} state changed: {state_change}")
 
     if state_change is ServiceStateChange.Added:
@@ -27,16 +26,17 @@ def on_service_state_change(
             print("  No info")
         print('\n')
 
-if __name__ == '__main__':
+def browse_service(service_type):
+    # In this case, the logging level is set to INFO, which means the logger will handle all messages with a severity of INFO and above.
     logging.basicConfig(level=logging.INFO)
 
-    parser = argparse.ArgumentParser()
-    services = ["_http._tcp.local."] # list of services to browse for
-
-    zeroconf = Zeroconf() # creates a Zeroconf instance, starts browsing for the specified services
-
-    print("\nBrowsing %d service(s), press Ctrl-C to exit...\n" % len(services))
-    browser = ServiceBrowser(zeroconf, services, handlers=[on_service_state_change])
+    zeroconf = Zeroconf()
+    print(f"\nBrowsing service {service_type}, press Ctrl-C to exit...\n")
+    
+    # A new instance of ServiceBrowser is created. ServiceBrowser is a class for browsing services on a network.
+    # The ServiceBrowser takes three arguments: a Zeroconf instance, a list of service types to look for, and a list of callback functions to call when a service of the specified type is found or lost.
+    # In this case, the callback function is on_service_state_change, which will be called whenever a service is added or removed.
+    browser = ServiceBrowser(zeroconf, [service_type], handlers=[on_service_state_change])
 
     try:
         while True:
@@ -45,3 +45,5 @@ if __name__ == '__main__':
         pass
     finally:
         zeroconf.close()
+        
+    return zeroconf, browser
