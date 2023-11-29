@@ -1,6 +1,7 @@
 import requests
 import threading
 import socket
+import time
 from flask import Flask, request
 from zeroconf import Zeroconf, ServiceBrowser, ServiceListener
 from zeroconf_browse import ServiceMonitor
@@ -40,7 +41,10 @@ def print_info(listener, condition):
             port=service_info.port
             print(f"Service port: {port}")
             runmonitoring_subscription(ip_address, port)
-
+            time.sleep(60)
+            runmonitoring_unsubscription(ip_address, port)
+            
+             
 def runmonitoring_subscription(service_ip, service_port):
     subscription_request_xml = f"""<?xml version="1.0" encoding="utf-8"?>
     <SubscribeRequest>
@@ -53,7 +57,20 @@ def runmonitoring_subscription(service_ip, service_port):
 
     response = requests.post(f'http://{service_ip}:{service_port}/avms/runmonitoring', headers = {'Content-Type': 'application/xml'}, data=subscription_request_xml)
     response.raise_for_status()  # Raises HTTPError for bad responses
-
+    
+def runmonitoring_unsubscription(service_ip, service_port):
+    unsubcription_request_xml = f"""<?xml version="1.0" encoding="utf-8"?>
+    <!-- ITxPT S02P00 Networks and Protocols - Unsubscribe request XML Example -->
+    <UnsubscribeRequest>
+        <Client-IP-Address>192.168.1.110</Client-IP-Address>
+        <ReplyPort>1698</ReplyPort>
+        <ReplyPath>/RunMonitoringDeliveryReply/1</ReplyPath>
+    </UnsubscribeRequest>"""
+    print(unsubcription_request_xml)
+    
+    response = requests.post(f'http://{service_ip}:{service_port}/avms/runmonitoring', headers = {'Content-Type': 'application/xml'}, data=unsubcription_request_xml)
+    response.raise_for_status()  # Raises HTTPError for bad responses
+    
 # Start the background thread
 threading.Thread(target=print_info, args=(listener, condition), daemon=True).start()
 
