@@ -8,9 +8,9 @@ from zeroconf_publish import publish_service
 
 #avms service parameters 
 name = "nobino-avms"
-ipaddress = "10.0.9.227"
+ipaddress = "192.168.1.105"
 port = 8000
-service_type = "_http._tcp.local."
+service_type = "_itxpt_http._tcp.local."
 properties = {
 	'txtvers': '1',
 	'version': '2.2.1',
@@ -113,7 +113,7 @@ def background_job():
         rmd = threading.Thread(target=runmonitoring_daemon, name='Thread-rm')
         rmd.daemon = True
         rmd.start()
-        time.sleep(1)
+        time.sleep(5)
 
 
 # thread will automatically exit when the main program finishes
