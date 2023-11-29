@@ -142,7 +142,7 @@ def background_job():
         rmd = threading.Thread(target=runmonitoring_daemon, name='Thread-rm')
         rmd.daemon = True
         rmd.start()
-        time.sleep(15)
+        time.sleep(1)
 
 
 # thread will automatically exit when the main program finishes
