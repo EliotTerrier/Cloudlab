@@ -6,7 +6,8 @@ from flask import Flask, request
 from zeroconf import Zeroconf, ServiceBrowser, ServiceListener
 from zeroconf_browse import ServiceMonitor
 
-
+server_ip = '192.168.1.110'
+server_port = 1698
 
 app = Flask(__name__)
 
@@ -18,14 +19,15 @@ def runmonitoring_reply():
     return "Data received successfully"
 
 def run_flask_app():
-    app.run(host='192.168.1.110', port=1698, debug=False)
+    app.run(host= server_ip, port = server_port, debug=False)
     
 # Start the Flask application in a new thread
 threading.Thread(target=run_flask_app, daemon=True).start()
-
+time.sleep(1)
 condition = threading.Condition()
 listener = ServiceMonitor("nobino-avms._itxpt_http._tcp.local.", condition)
 zeroconf = Zeroconf()
+print("Waiting for nobino-avms._itxpt_http._tcp.local. to be published...")
 browser = ServiceBrowser(zeroconf, "_itxpt_http._tcp.local.", listener)
 
 def print_info(listener, condition):
@@ -39,36 +41,41 @@ def print_info(listener, condition):
                 ip_address = socket.inet_ntoa(address)
                 print(f"Service address: {ip_address}")
             port=service_info.port
-            print(f"Service port: {port}")
-            runmonitoring_subscription(ip_address, port)
+            # Create a new dictionary to hold the decoded properties
+            properties = {k.decode('utf-8'): v.decode('utf-8') for k, v in service_info.properties.items()}
+            path = properties.get('path')
+            #operations = properties.get('operation')
+            print(f"Service path: {path}")
+            #print(f"Service operations: {operations}")
+            runmonitoring_subscription(ip_address, port, path)
             time.sleep(60)
-            runmonitoring_unsubscription(ip_address, port)
+            runmonitoring_unsubscription(ip_address, port, path)
             
              
-def runmonitoring_subscription(service_ip, service_port):
+def runmonitoring_subscription(service_ip, service_port, path):
     subscription_request_xml = f"""<?xml version="1.0" encoding="utf-8"?>
     <SubscribeRequest>
-        <Client-IP-Address>192.168.1.110</Client-IP-Address>
-        <ReplyPort>1698</ReplyPort>
+        <Client-IP-Address>{server_ip}</Client-IP-Address>
+        <ReplyPort>{server_port}</ReplyPort>
         <ReplyPath>/RunMonitoringDeliveryReply/1</ReplyPath>
     </SubscribeRequest>"""
     print(subscription_request_xml)
 
 
-    response = requests.post(f'http://{service_ip}:{service_port}/avms/runmonitoring', headers = {'Content-Type': 'application/xml'}, data=subscription_request_xml)
+    response = requests.post(f'http://{service_ip}:{service_port}/{path}runmonitoring', headers = {'Content-Type': 'application/xml'}, data=subscription_request_xml)
     response.raise_for_status()  # Raises HTTPError for bad responses
     
-def runmonitoring_unsubscription(service_ip, service_port):
+def runmonitoring_unsubscription(service_ip, service_port, path, operations):
     unsubcription_request_xml = f"""<?xml version="1.0" encoding="utf-8"?>
     <!-- ITxPT S02P00 Networks and Protocols - Unsubscribe request XML Example -->
     <UnsubscribeRequest>
-        <Client-IP-Address>192.168.1.110</Client-IP-Address>
-        <ReplyPort>1698</ReplyPort>
+        <Client-IP-Address>{server_ip}</Client-IP-Address>
+        <ReplyPort>{server_port}</ReplyPort>
         <ReplyPath>/RunMonitoringDeliveryReply/1</ReplyPath>
     </UnsubscribeRequest>"""
     print(unsubcription_request_xml)
     
-    response = requests.post(f'http://{service_ip}:{service_port}/avms/runmonitoring', headers = {'Content-Type': 'application/xml'}, data=unsubcription_request_xml)
+    response = requests.post(f'http://{service_ip}:{service_port}/{path}{operations}', headers = {'Content-Type': 'application/xml'}, data=unsubcription_request_xml)
     response.raise_for_status()  # Raises HTTPError for bad responses
     
 # Start the background thread
