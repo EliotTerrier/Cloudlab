@@ -88,7 +88,36 @@ def runmonitoring_subscription():
 				else:
 					return Response(status=422, body="Could not find Reply Port structure.")
 			else:
-				return Response(status=422, body="Could not find Client-IP-Address field.")		
+				return Response(status=422, body="Could not find Client-IP-Address field.")	
+		elif root.tag =="UnsubscribeRequest":
+			IP_address = root.findall('Client-IP-Address')
+			if len(IP_address)>0:
+				for ip in root.iter('Client-IP-Address'):
+						client_ip = ip.text
+				port_number = root.findall('ReplyPort')
+				if len(port_number)>0:
+					for port in root.iter('ReplyPort'):
+						reply_port = port.text
+					path = root.findall('ReplyPath')
+					if len(path)>0:
+						for pth in root.iter('ReplyPath'):
+							reply_path = pth.text
+						unsubscribe_response = '''<?xml version="1.0" encoding="UTF-8"?><UnsubscribeResponse><Active>false</Active></UnsubscribeResponse>'''
+						if client_ip in runmonitoring_ip_list:
+							ind = runmonitoring_ip_list.index(client_ip)
+							del runmonitoring_ip_list[ind]
+							del runmonitoring_port_list[ind]
+							del runmonitoring_path_list[ind]
+							resp = Response(unsubscribe_response, status=200, mimetype='application/xml')
+							return resp
+						else:
+							return Response(status=422, body="Could not find client ("+client_ip+") in the list.")
+					else:
+						return Response(status=422, body="Could not find Reply Path structure.")
+				else:
+					return Response(status=422, body="Could not find Reply Port structure.")
+			else:
+				return Response(status=422, body="Could not find Client-IP-Address field.")
 		else: 
 			return Response(status=422, body="Could not find SubscribeRequest structure.")
 	except:
@@ -113,7 +142,7 @@ def background_job():
         rmd = threading.Thread(target=runmonitoring_daemon, name='Thread-rm')
         rmd.daemon = True
         rmd.start()
-        time.sleep(5)
+        time.sleep(15)
 
 
 # thread will automatically exit when the main program finishes
