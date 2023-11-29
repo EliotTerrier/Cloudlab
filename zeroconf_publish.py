@@ -4,47 +4,35 @@ from time import sleep
 from zeroconf import ServiceInfo, Zeroconf
 import socket
 
-if __name__ == '__main__':
-    
-    # Service information definition
-    desc = {
-        'txtvers': '1',
-        'version': '2.1.1',
-        'model': 'model26',
-        'manufacturer': 'ITxPT',
-        'serialnumber': 'SN0123456789',
-        'softwareversion': 'v1.2.3',
-        'hardwareversion': 'revision D',
-        'macaddress': 'CF:DA:98:63:9D:F6',
-        'status': '0',
-        'services': 'inventory;avms'
-    }
+
+def publish_service(name, service_type, ipaddress, port, properties):
+    #global exit_program
     info = ServiceInfo(
-        "_http._tcp.local.",
-        "Nobino-inventory._http._tcp.local.",
-        addresses=['10.0.9.227'],
-        port=9,
-        
-        properties=desc,  # The TXT record is added here
+        service_type,
+        f"{name}.{service_type}",
+        addresses=[socket.inet_aton(ipaddress)],
+        port=port,
+        properties=properties,
     )
 
-    # Zeroconf configuration
     zeroconf = Zeroconf()
-
-    print("Registration of a service, press Ctrl-C to exit...")
-
-    # Register the service
+    print(f"Registration of a service {name}, press Ctrl-C to exit...")
     zeroconf.register_service(info)
-
     try:
-        # Main loop
-        while True:
+     # Main loop
+        while True: #not exit_program:
             sleep(0.1)
-    except KeyboardInterrupt:
+            
+    except KeyboardInterrupt: #except (KeyboardInterrupt, SystemExit):
         pass
     finally:
         # Cleanup
         print("Unregistering...")
         zeroconf.unregister_service(info)
         zeroconf.close()
+
+    
+
+
+
 
