@@ -7,8 +7,8 @@ from flask import Flask, Response, request
 from zeroconf_publish import publish_service
 
 #avms service parameters 
-name = "nobino-avms"
-ipaddress = "192.168.1.105"
+name = "ITxPT_avms"
+ipaddress = "10.0.9.227"
 port = 8000
 service_type = "_itxpt_http._tcp.local."
 properties = {
