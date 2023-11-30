@@ -5,11 +5,33 @@ import time
 from flask import Flask, request
 from zeroconf import Zeroconf, ServiceBrowser, ServiceListener
 from zeroconf_browse import ServiceMonitor
+from zeroconf_publish import publish_service
 
-server_ip = '192.168.1.110'
+server_ip = '10.0.9.208'
 server_port = 1698
-
 app = Flask(__name__)
+
+name = "ITxPTconsumer_inventory"
+port = 9
+service_type = "_itxpt_socket._tcp.local."
+ipaddress = server_ip
+# Create TXT records as a dictionary
+properties = {
+    "txtvers": "1",
+    "version": "2.2.1",
+    "model": "model1",
+    "manufacturer": "ITxPT",
+    "serialnumber": "DS406420640210",
+    "softwareversion": "v1.1.1",
+    "hardwareversion": "revision J",
+    "macaddress": "8a:74:08:b0:be:b7",
+    "status": "0",
+    "services": "inventory",
+}
+
+def publish_zeroconf_service():  
+	threading.Thread(target=publish_service, daemon=True, args=(name, service_type, ipaddress, port, properties)).start() # daemon=True to exit the subscrption process when the flask server is stopped
+
 
 @app.route('/RunMonitoringDeliveryReply/1', methods=['POST'])   
 def runmonitoring_reply():
@@ -44,11 +66,12 @@ def run_flask_app():
     
 # Start the Flask application in a new thread
 threading.Thread(target=run_flask_app, daemon=True).start()
+publish_zeroconf_service()
 time.sleep(1)
 condition = threading.Condition()
-listener = ServiceMonitor("nobino-avms._itxpt_http._tcp.local.", condition)
+listener = ServiceMonitor("avms", condition)
 zeroconf = Zeroconf()
-print("Waiting for nobino-avms._itxpt_http._tcp.local. to be published...")
+print("Waiting for avms service...")
 browser = ServiceBrowser(zeroconf, "_itxpt_http._tcp.local.", listener)
 
 def print_info(listener, condition):
@@ -72,7 +95,7 @@ def print_info(listener, condition):
             plannedpattern_subscription(ip_address, port, path)
             vehiclemonitoring_subscription(ip_address, port, path)
             journeymonitoring_subscription(ip_address, port, path)
-            time.sleep(10)
+            time.sleep(30)
             runmonitoring_unsubscription(ip_address, port, path)
             plannedpattern_unsubscription(ip_address, port, path)
             vehiclemonitoring_unsubscription(ip_address, port, path)
