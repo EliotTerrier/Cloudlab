@@ -3,10 +3,10 @@ import time
 import socket
 
 class ServiceMonitor(ServiceListener):
-    def __init__(self, desired_name, condition):
+    def __init__(self, desired_service, condition):
         super().__init__()
         self.inf = {}
-        self.desired_name = desired_name
+        self.desired_service = desired_service
         self.condition = condition
         
     def update_service(self, zc: Zeroconf, type_: str, name: str) -> None:
@@ -24,7 +24,7 @@ class ServiceMonitor(ServiceListener):
             self.condition.notify_all()
     def add_service(self, zc: Zeroconf, type_: str, name: str) -> None:
         
-        if name != self.desired_name:
+        if self.desired_service not in name:
             return
         info = zc.get_service_info(type_, name)
         self.inf[name] = info
