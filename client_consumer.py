@@ -35,29 +35,30 @@ def publish_zeroconf_service():
 
 @app.route('/RunMonitoringDeliveryReply/1', methods=['POST'])   
 def runmonitoring_reply():
-    data = request.data.decode("utf-8")
-    print("Runmonitoring received data:", data)
+    data = request.get_data().decode('utf-8')
+    print("RunMonitoring data:", data)
+
     # Add your logic to process the received data here
     return "Data received successfully"
 
 @app.route('/PlannedPatternDeliveryReply/1', methods=['POST'])   
 def plannedpattern_reply():
-    data = request.data.decode("utf-8")
-    print("Plannedpattern received data:", data)
+    data = request.get_data().decode('utf-8')
+    print("PlannedPattern data:", data)
     # Add your logic to process the received data here
     return "Data received successfully"
 
 @app.route('/VehicleMonitoringDeliveryReply/1', methods=['POST'])   
 def vehiclemonitoring_reply():
-    data = request.data.decode("utf-8")
-    print("Vehiclemonitoring received data:", data)
+    data = request.get_data().decode('utf-8')
+    print("VehicleMonitoring data:", data)
     # Add your logic to process the received data here
     return "Data received successfully"
 
 @app.route('/JourneyMonitoringDeliveryReply/1', methods=['POST'])   
 def journeymonitoring_reply():
-    data = request.data.decode("utf-8")
-    print("Journeymonitoring received data:", data)
+    data = request.get_data().decode('utf-8')
+    print("PlannedPattern data:", data)
     # Add your logic to process the received data here
     return "Data received successfully"
 
