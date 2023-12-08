@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <UnsubscribeRequest>
+        <Client-IP-Address>10.0.9.208</Client-IP-Address>
+        <ReplyPort>1698</ReplyPort>
+        <ReplyPath>/JourneyMonitoringDeliveryReply/1</ReplyPath>
+    </UnsubscribeRequest>
