@@ -1,7 +1,7 @@
 import threading
 import xml.etree.ElementTree as ET
 from flask import Flask
-from zeroconf_publish import publish_service
+from service_discovery import publish_service
 
 app = Flask(__name__)
 #service elements

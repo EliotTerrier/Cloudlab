@@ -4,7 +4,7 @@ import time
 import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime
-from zeroconf_publish import publish_service
+from service_discovery import publish_service
 
 MCAST_GRP = '239.255.42.21'
 MULTICAST_TTL = 2

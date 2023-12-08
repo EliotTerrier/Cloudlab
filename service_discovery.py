@@ -1,4 +1,4 @@
-from zeroconf import Zeroconf, ServiceBrowser, ServiceListener
+from zeroconf import Zeroconf, ServiceInfo, ServiceListener
 import time
 import socket
 
@@ -39,3 +39,28 @@ class ServiceMonitor(ServiceListener):
     def getInfo(self):
         return self.inf
 
+def publish_service(name, service_type, ipaddress, port, properties):
+    #global exit_program
+    info = ServiceInfo(
+        service_type,
+        f"{name}.{service_type}",
+        addresses=[socket.inet_aton(ipaddress)],
+        port=port,
+        properties=properties,
+    )
+
+    zeroconf = Zeroconf()
+    print(f"Registration of a service {name}, press Ctrl-C to exit...")
+    zeroconf.register_service(info)
+    try:
+     # Main loop
+        while True: #not exit_program:
+            time.sleep(0.1)
+            
+    except KeyboardInterrupt: #except (KeyboardInterrupt, SystemExit):
+        pass
+    finally:
+        # Cleanup
+        print("Unregistering...")
+        zeroconf.unregister_service(info)
+        zeroconf.close()

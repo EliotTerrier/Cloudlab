@@ -4,7 +4,7 @@ import _thread
 import threading
 import xml.etree.ElementTree as ET
 from flask import Flask, Response, request
-from zeroconf_publish import publish_service
+from service_discovery import publish_service
 
 #avms service parameters 
 name = "ITxPT_avms"

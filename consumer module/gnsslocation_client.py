@@ -3,7 +3,7 @@ import struct
 import threading
 import time
 from zeroconf import Zeroconf, ServiceBrowser
-from zeroconf_browse import ServiceMonitor
+from service_discovery import ServiceMonitor
 
 MCAST_GRP = None # multicast group
 MCAST_PORT = None # multicast port

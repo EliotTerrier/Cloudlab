@@ -4,8 +4,8 @@ import socket
 import time
 from flask import Flask, request
 from zeroconf import Zeroconf, ServiceBrowser, ServiceListener
-from zeroconf_browse import ServiceMonitor
-from zeroconf_publish import publish_service
+from service_discovery import ServiceMonitor, publish_service
+
 
 server_ip = '10.0.9.208'
 server_port = 1698
