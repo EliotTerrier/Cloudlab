@@ -1,6 +1,12 @@
 # Virtual environment ITxPT laboratory project repository
 This is the repository about the ITxPT cloudlab project, the current situation of it is that there is a avms service up and running and a client can subscribe and get data from it. Same for gnsslocation service.
 
+# Utilisation
+
+Simulate AVMS service: run itxpt_avms.py & client_consumer.py in 2 different terminals
+
+Simulate gnsslocation service: run itxpt_gnsslocation.py and gnsslocation_client.py on 2 different devices
+
 # Structure
 
 | File                   | Description                                                  |
@@ -13,3 +19,4 @@ This is the repository about the ITxPT cloudlab project, the current situation o
 | **itxpt_inventory**    | Simulation of an inventory service.                            |
 | **service_discovery.py**| Library used for service discovery features.                  |
 | **subscription_function.py** | Library used for subscription handling and sending data features.|
+
