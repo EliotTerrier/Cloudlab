@@ -2,7 +2,30 @@ import xml.etree.ElementTree as ET
 from flask import Response, request
 import requests
 
+def subscription_request(service_ip, service_port, path, operation_name, server_ip, server_port, reply_path):
+    subscription_request = f"""<?xml version="1.0" encoding="utf-8"?>
+    <SubscribeRequest>
+        <Client-IP-Address>{server_ip}</Client-IP-Address>
+        <ReplyPort>{server_port}</ReplyPort>
+        <ReplyPath>{reply_path}</ReplyPath>
+    </SubscribeRequest>"""
+    print(subscription_request)
 
+    response = requests.post(f'http://{service_ip}:{service_port}/{path}{operation_name}', headers = {'Content-Type': 'application/xml'}, data=subscription_request)
+    response.raise_for_status()  # Raises HTTPError for bad responses
+
+def unsubscription_request(service_ip, service_port, path, operation_name, server_ip, server_port, reply_path):
+    unsubscription_request = f"""<?xml version="1.0" encoding="utf-8"?>
+    <UnsubscribeRequest>
+        <Client-IP-Address>{server_ip}</Client-IP-Address>
+        <ReplyPort>{server_port}</ReplyPort>
+        <ReplyPath>{reply_path}</ReplyPath>
+    </UnsubscribeRequest>"""
+    print(unsubscription_request)
+
+    response = requests.post(f'http://{service_ip}:{service_port}/{path}{operation_name}', headers = {'Content-Type': 'application/xml'}, data=unsubscription_request)
+    response.raise_for_status()  # Raises HTTPError for bad responses
+    
 def handle_subscription(ip_list, port_list, path_list):
 
 	with open("last_avms_sub_req.xml", "w") as xml_file:
