@@ -3,9 +3,9 @@ This is the repository about the ITxPT cloudlab project, the current situation o
 
 # Utilisation
 
-Simulate AVMS service: run itxpt_avms.py & client_consumer.py in 2 different terminals
+- **Simulate AVMS service**: run itxpt_avms.py & client_consumer.py in 2 different terminals
 
-Simulate gnsslocation service: run itxpt_gnsslocation.py and gnsslocation_client.py on 2 different devices
+- **Simulate gnsslocation service**: run itxpt_gnsslocation.py and gnsslocation_client.py on 2 different devices
 
 # Structure
 
